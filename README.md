@@ -148,7 +148,6 @@ float t[] = {
 };
 	
 
-NOTES *LNOTES = NULL, *RNOTES = NULL;
 int i;
 for(i = 0; i < 24; ++i){
 	if(i % 2 == 0 && i != 0)
@@ -156,8 +155,6 @@ for(i = 0; i < 24; ++i){
 	WRITE_NOTE(s, tritone_notes[i], 0.5, 100);
 	
 }
-	
-WRITE_NOTES(s, LNOTES);
 ...
 ```
 
