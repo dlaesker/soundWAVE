@@ -99,7 +99,7 @@ NOTES *CLEAR_NOTE_LIST(NOTES *list){
 
 ERRCODE isValidNote(NOTE *note){ return (*note < C0 || *note > B8) ? 0 : 1;}
 /* Writes a single NOTE (and its duration) to the file */
-int WRITE_NOTE(SOUNDWAVE *S, NOTE note, float dur){
+int WRITE_NOTE(SOUNDWAVE *S, NOTE note, float dur, float amp){
 	if(S == NULL){
 			perror("Soundwave is NULL!");
 			return -1;
@@ -121,7 +121,7 @@ int WRITE_NOTE(SOUNDWAVE *S, NOTE note, float dur){
 			
 	WORD smp_width = S->FORMAT.wBlockAlign;
 
-	int Amp = MAX_AMP(smp_width); // In the future, allow for the adjustment of the amplitude.
+	int Amp = (amp / 100) * MAX_AMP(smp_width);
 
 	float freq = NOTEF(note);
 
@@ -145,7 +145,7 @@ int WRITE_NOTE(SOUNDWAVE *S, NOTE note, float dur){
 int WRITE_NOTES(SOUNDWAVE *S, NOTES *notes){
     NOTES *cur = notes;
     for(; cur != NULL; cur = cur->next)
-        if(WRITE_NOTE(S, cur->note, cur->dur) < 0) return -1;
+        if(WRITE_NOTE(S, cur->note, cur->dur, cur->amp) < 0) return -1;
     
 	return 1;
 }
@@ -178,7 +178,7 @@ int WRITE_NOTES_STEREO(SOUNDWAVE *S, NOTES *L_CH, NOTES *R_CH){
 				for(t = 0; t < S->FORMAT.dwSampleRate * dur; ++t){
 						lsmp = SAMPLE_OFFSET[smp_width]+Amp*GETSAMPLE(2*M_PI*lfrq*t);
 						if(flag){
-								printf("%u\n", lsmp);
+//								printf("%u\n", lsmp);
 								flag = 0;
 						}
 						rsmp = SAMPLE_OFFSET[smp_width]+Amp*GETSAMPLE(2*M_PI*rfrq*t);
@@ -194,13 +194,13 @@ int WRITE_NOTES_STEREO(SOUNDWAVE *S, NOTES *L_CH, NOTES *R_CH){
 		if(lch) {
 				l_last  = lch;
 				lch     = lch->next;
-		}else WRITE_NOTE(S, l_last->note, l_last->dur);
+		}else WRITE_NOTE(S, l_last->note, l_last->dur, l_last->amp);
 		
 		if(rch) {
-				WRITE_NOTE(S, rch->note, rch->dur); // Write right channel
+				WRITE_NOTE(S, rch->note, rch->dur, rch->amp); // Write right channel
 				r_last  = rch;
 				rch     = rch->next;
-		}else WRITE_NOTE(S, r_last->note, r_last->dur);
+		}else WRITE_NOTE(S, r_last->note, r_last->dur, r_last->amp);
 	}
 	
 	S->DATASZ += (S->FORMAT.dwSampleRate * smp_width * dur * 2 * count);

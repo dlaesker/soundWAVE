@@ -108,15 +108,17 @@ typedef struct {
 ERRCODE isValidBitsPerSample(WORD *bitsPerSample);
 ERRCODE isValidNumberOfChannels(WORD *nChannels);
 ERRCODE isValidNote(NOTE *note);
+
 SOUNDWAVE *INIT_PCMWAVE(char *filename, WORD bitsPerSample, WORD nChannels, DWORD srate);
 SOUNDWAVE *DELETE_PCMWAVE(SOUNDWAVE *S);
+void SOUNDWAVE_INFO(SOUNDWAVE *S);
+int WRITE_HDR(SOUNDWAVE *S);
+
 void MAKE_NOTE(NOTES *new_note, NOTE *note, float *dur, float *amp);
 NOTES *APPEND_NOTE(NOTES *list, NOTE note, float dur, float amp);
 NOTES *CLEAR_NOTE_LIST(NOTES *list);
-int WRITE_NOTE(SOUNDWAVE *S, NOTE note, float dur);
+int WRITE_NOTE(SOUNDWAVE *S, NOTE note, float dur, float amp);
 int WRITE_NOTES(SOUNDWAVE *S, NOTES *notes);
 int WRITE_NOTES_STEREO(SOUNDWAVE *S, NOTES *L_CH, NOTES *R_CH);
-int WRITE_HDR(SOUNDWAVE *S);
-void SOUNDWAVE_INFO(SOUNDWAVE *S);
 
 #endif
